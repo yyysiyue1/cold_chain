@@ -75,13 +75,16 @@
 - 如果要添加模型就只用更改两处
 - <img width="439" height="579" alt="e9db0966fb05fc7f1087b86b9cc8ecde" src="https://github.com/user-attachments/assets/282e400b-41e6-40cb-a494-7aee45eedd30" />
 - 其中 prediction logic.py中execute_prediction_unit只需更改以下部分
-  - 1、execute_prediction_unit(row, food_info, engine, predictor_cache)
-   -  <img width="952" height="691" alt="image" src="https://github.com/user-attachments/assets/710f9bc3-94e9-4d38-9d5d-42d18e88e544" />
+  - 1、execute_prediction_unit(row, food_info, engine, predictor_cache) ///目前无需更改
+   -  <img width="951" height="644" alt="image" src="https://github.com/user-attachments/assets/56039fc8-e63f-4987-8fb8-c2de5148a378" />
+
 
     - 下面这里可以在路由中直接定义好食品分类代码对应的执行函数
-    -  <img width="701" height="147" alt="image" src="https://github.com/user-attachments/assets/0f2bc047-0d93-43d8-9faa-72aaaca0217d" />
+    -  <img width="784" height="187" alt="image" src="https://github.com/user-attachments/assets/8de0e45e-b876-4894-a344-5dd7a1c36dc5" />
+
     -  对模型crayfish_tvbn中的执行函数 execute 起别名 方便区分
-    -  <img width="776" height="51" alt="image" src="https://github.com/user-attachments/assets/adc732ee-3731-4707-9cfe-6e1271dc7839" />
+    -  <img width="757" height="145" alt="image" src="https://github.com/user-attachments/assets/46d06aca-f547-417f-b17d-6329b4e2d009" />
+
     -  另外记得在handle_prediction_results中缓存一下对应的模型
     -  <img width="748" height="104" alt="image" src="https://github.com/user-attachments/assets/df5b0d85-07c1-4317-ac41-21f3837c7530" />
 
@@ -112,6 +115,7 @@
 
 
 ---
+
 
 
 
