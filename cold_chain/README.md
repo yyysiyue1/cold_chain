@@ -87,16 +87,14 @@
 
     -  另外记得在handle_prediction_results中缓存一下对应的模型
     -  <img width="748" height="104" alt="image" src="https://github.com/user-attachments/assets/df5b0d85-07c1-4317-ac41-21f3837c7530" />
+           
 
-
-                                     
--  更具体的可以去app/repos/orders.py中找见该函数理解模仿写
-- 2、find_previous_abnormal_value(order_number, rec_time, tra_code, order_tra_chain, engine, flag="化学")
+- 2、find_previous_abnormal_value(order_number, rec_time, tra_code, order_tra_chain, engine, flag="化学") //重要函数
 -  这个是找链上前一条数据的含量值 
 -   <img width="1160" height="605" alt="image" src="https://github.com/user-attachments/assets/27863b36-ef9b-4815-89c6-d52a016fe46c" />
 
 
-- 3、find_previous_monitor_time(order_number, rec_time, tra_code, order_tra_chain, engine):
+- 3、find_previous_monitor_time(order_number, rec_time, tra_code, order_tra_chain, engine): ////重要函数
     """
     查找上一条监测数据的时间。
     """
@@ -115,6 +113,7 @@
 
 
 ---
+
 
 
 
