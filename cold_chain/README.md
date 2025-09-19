@@ -72,7 +72,9 @@
 ## 贡献
 
 - TODO：其他贡献者可以将模型加入本系统直接实现半小时动态读取数据并处理后写入数据再预警的一条龙服务
-  - 重要函数：
+- 如果要添加模型就只用更改两处
+- <img width="439" height="579" alt="e9db0966fb05fc7f1087b86b9cc8ecde" src="https://github.com/user-attachments/assets/282e400b-41e6-40cb-a494-7aee45eedd30" />
+- 其中 prediction logic.py中execute_prediction_unit只需更改以下部分
   - 1、execute_prediction_unit(row, food_info, engine, predictor_cache)
    -  <img width="952" height="691" alt="image" src="https://github.com/user-attachments/assets/710f9bc3-94e9-4d38-9d5d-42d18e88e544" />
 
@@ -80,6 +82,8 @@
     -  <img width="701" height="147" alt="image" src="https://github.com/user-attachments/assets/0f2bc047-0d93-43d8-9faa-72aaaca0217d" />
     -  对模型crayfish_tvbn中的执行函数 execute 起别名 方便区分
     -  <img width="776" height="51" alt="image" src="https://github.com/user-attachments/assets/adc732ee-3731-4707-9cfe-6e1271dc7839" />
+    -  另外记得在handle_prediction_results中缓存一下对应的模型
+    -  <img width="748" height="104" alt="image" src="https://github.com/user-attachments/assets/df5b0d85-07c1-4317-ac41-21f3837c7530" />
 
 
                                      
@@ -96,12 +100,19 @@
 - 这是寻找链上前一条数据的时间 
 - <img width="1099" height="730" alt="image" src="https://github.com/user-attachments/assets/924b2967-a316-4e81-a7d2-5ad0a621f510" />
 
+- 第二部分crayfish_tvbn中重要的就是logic.py 里面的全部可以改写换成其他模型
+- 执行函数 execute() 这就是上面提到的起别名那个 然后在标志物整体调度函数中路由那里加上就行
+- <img width="1295" height="513" alt="image" src="https://github.com/user-attachments/assets/43553759-fbdd-431a-a87c-c851b9725b03" />
+<img width="689" height="165" alt="image" src="https://github.com/user-attachments/assets/0dd71420-4df1-4cd1-a940-f725446d8ebe" />
+
+
 ## 许可证 
 
 杨思越  许可证
 
 
 ---
+
 
 
 
