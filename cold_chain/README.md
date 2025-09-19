@@ -5,7 +5,7 @@
 ## 项目简介
 
 本项目是一个综合性的冷链管理工具，其核心功能包括：
--   **数据处理与预测：** 利用`tvbn`和`advanced_prediction_models`等多种预测模型，对冷链数据进行分析和预测。
+-   **数据处理与预测：** 利用models中`crayfish_tvbn`等多种预测模型以及(`app/features`)中温湿度过期，对冷链数据进行分析和预测。
 -   **数据库交互：** 自动执行数据库设置 (`db/database_setup.py`)，确保数据存储的完整性。
 -   **警告处理：** 包含一个专门的模块 (`app/warning_processing.py`) 用于处理和响应系统产生的警告。
 -   **配置管理：** 所有系统配置都可以通过 `db/config.ini` 文件进行灵活调整。
@@ -74,13 +74,16 @@
 - TODO：其他贡献者可以将模型加入本系统直接实现半小时动态读取数据并处理后写入数据再预警的一条龙服务
   - 重要函数：
   - 1、execute_prediction_unit(row, food_info, engine, predictor_cache)
-   -  <img width="720" height="303" alt="image" src="https://github.com/user-attachments/assets/4c64f8ec-a829-4850-94ee-7cfb84da2f65" />
-    - 下面这里可以加elif判断是否为别的食品
-    -  <img width="1167" height="86" alt="image" src="https://github.com/user-attachments/assets/51c061e7-382b-49a8-8b19-0d52b8735616" />
+   -  <img width="952" height="691" alt="image" src="https://github.com/user-attachments/assets/710f9bc3-94e9-4d38-9d5d-42d18e88e544" />
+
+    - 下面这里可以在路由中直接定义好食品分类代码对应的执行函数
+    -  <img width="701" height="147" alt="image" src="https://github.com/user-attachments/assets/0f2bc047-0d93-43d8-9faa-72aaaca0217d" />
+    -  对模型crayfish_tvbn中的执行函数 execute 起别名 方便区分
+    -  <img width="776" height="51" alt="image" src="https://github.com/user-attachments/assets/adc732ee-3731-4707-9cfe-6e1271dc7839" />
 
 
                                      
--  更具体的可以去prediction_logic.py中找见该函数理解模仿写
+-  更具体的可以去app/repos/orders.py中找见该函数理解模仿写
 - 2、find_previous_abnormal_value(order_number, rec_time, tra_code, order_tra_chain, engine, flag="化学")
 -  这个是找链上前一条数据的含量值 
 -   <img width="1160" height="605" alt="image" src="https://github.com/user-attachments/assets/27863b36-ef9b-4815-89c6-d52a016fe46c" />
@@ -99,6 +102,7 @@
 
 
 ---
+
 
 
 
