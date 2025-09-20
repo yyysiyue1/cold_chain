@@ -2,14 +2,13 @@
 from __future__ import annotations
 import pandas as pd
 from typing import Dict, Any, List, Optional
-from models.risk_levels import determine_risk_level
 from .lettuce_pseudomonas_predictor import LettucePseudomonasPredictor
 
 from app.repos.orders import (
     get_order_tra_chain, find_previous_abnormal_value,
     find_previous_monitor_time, get_storage_time
 )
-
+from models.risk_levels import RiskClassifier
 
 RISK_FLAG = "生物"
 RISK_NAME = "假单胞菌"
@@ -46,13 +45,17 @@ def _compute_pseudomonas_value(row: Dict[str, Any], food_info: Dict[str, Any], e
         ))
     return float(last_val)
 
-def _make_pseudomonas_record(row: Dict[str, Any], food_info: Dict[str, Any], value: float, engine) -> Optional[Dict[str, Any]]:
+def _make_pseudomonas_record(
+    row: Dict[str, Any],
+    food_info: Dict[str, Any],
+    value: float,
+    risk_level: str
+) -> Optional[Dict[str, Any]]:
     monitor_num = row.get("MonitorNum")
-    if monitor_num is None: return None
-    food_code = food_info.get("FoodClassificationCode")
-    risk_level = determine_risk_level(food_code, value, RISK_FLAG, engine)
+    if monitor_num is None:
+        return None
     return {
-        "PredictResultID": f"{monitor_num}12", # 使用12作为标识
+        "PredictResultID": f"{monitor_num}11",
         "MonitorNum": monitor_num,
         "OrderNumber": row.get("OrderNumber"),
         "TraCode": row.get("TraCode"),
@@ -64,23 +67,44 @@ def _make_pseudomonas_record(row: Dict[str, Any], food_info: Dict[str, Any], val
         "RiskName": RISK_NAME,
         "PredictValue": float(value),
         "Unit": UNIT,
-        "RiskLevel": risk_level
+        "RiskLevel": risk_level,
     }
 
-def execute(row: Dict[str, Any], food_info: Dict[str, Any], engine, predictor_cache: Dict[str, Any]) -> List[Dict[str, Any]]:
+# --------- 对外入口 ---------
+def execute(
+    row: Dict[str, Any],
+    food_info: Dict[str, Any],
+    engine,
+    predictor_cache: Dict[str, Any]
+) -> List[Dict[str, Any]]:
     """
-    入口：由外层逻辑调用。
     仅在食品分类匹配小龙虾(C09006)时生成记录。
+    依赖外部注入的 risk_classifier 做风险判级；若未注入则临时构造一个兜底判级器。
     """
-    if food_info.get("FoodClassificationCode") not in SUPPORTED_FOOD_CLASSES:
+    if str(food_info.get("FoodClassificationCode")) not in SUPPORTED_FOOD_CLASSES:
         return []
 
-    # 懒加载/重用模型实例
-    predictor: LettucePseudomonasPredictor = predictor_cache.get("crayfish_tvbn")  # 约定 key
+    # 1) 懒加载/复用模型
+    predictor: LettucePseudomonasPredictor = predictor_cache.get("crayfish_tvbn")
     if predictor is None:
         predictor = LettucePseudomonasPredictor()
         predictor_cache["crayfish_tvbn"] = predictor
 
+    # 2) 计算 TVBN 数值
     value = _compute_pseudomonas_value(row, food_info, engine, predictor)
-    rec = _make_pseudomonas_record(row, food_info, value, engine)
+
+    # 3) 判级（优先用 prediction_logic 注入的 RiskClassifier）
+    food_code = food_info.get("FoodClassificationCode")
+    risk_level: str
+    rc = predictor_cache.get("risk_classifier")
+    if rc is not None:
+        risk_level = rc.classify(food_code, value, RISK_FLAG)
+    else:
+        # 兜底：仅加载当前分类阈值，避免全表 IO
+        tmp = RiskClassifier(engine)
+        tmp.preload(flags=(RISK_FLAG,), food_codes=[food_code])
+        risk_level = tmp.classify(food_code, value, RISK_FLAG)
+
+    # 4) 生成记录
+    rec = _make_pseudomonas_record(row, food_info, value, risk_level)
     return [rec] if rec else []
